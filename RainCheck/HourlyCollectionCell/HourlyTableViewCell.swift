@@ -9,6 +9,9 @@ import UIKit
 
 class HourlyTableViewCell: UITableViewCell {
 
+  static let identifier = "HourlyTableViewCell"
+
+
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code
@@ -19,5 +22,9 @@ class HourlyTableViewCell: UITableViewCell {
 
         // Configure the view for the selected state
     }
+
+  static func nib() -> UINib {
+    return UINib(nibName: "HourlyTableViewCell", bundle: nil)
+  }
     
 }

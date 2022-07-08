@@ -9,6 +9,8 @@ import UIKit
 
 class WeatherTableViewCell: UITableViewCell {
 
+  static let identifier = "WeatherTableViewCell"
+
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code
@@ -19,5 +21,9 @@ class WeatherTableViewCell: UITableViewCell {
 
         // Configure the view for the selected state
     }
+
+  static func nib() -> UINib {
+    return UINib(nibName: "WeatherTableViewCell", bundle: nil)
+  }
     
 }
