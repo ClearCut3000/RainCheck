@@ -19,6 +19,7 @@
 		36641325287613610059C347 /* HourlyTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 36641323287613610059C347 /* HourlyTableViewCell.xib */; };
 		36641329287A30F10059C347 /* WeatherCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36641327287A30F00059C347 /* WeatherCollectionViewCell.swift */; };
 		3664132A287A30F10059C347 /* WeatherCollectionViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 36641328287A30F00059C347 /* WeatherCollectionViewCell.xib */; };
+		3664132C287B15F90059C347 /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3664132B287B15F90059C347 /* Models.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -36,6 +37,7 @@
 		36641323287613610059C347 /* HourlyTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = HourlyTableViewCell.xib; sourceTree = "<group>"; };
 		36641327287A30F00059C347 /* WeatherCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherCollectionViewCell.swift; sourceTree = "<group>"; };
 		36641328287A30F00059C347 /* WeatherCollectionViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = WeatherCollectionViewCell.xib; sourceTree = "<group>"; };
+		3664132B287B15F90059C347 /* Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -78,6 +80,7 @@
 				3664131128760F310059C347 /* Assets.xcassets */,
 				3664131328760F310059C347 /* LaunchScreen.storyboard */,
 				3664131628760F310059C347 /* Info.plist */,
+				3664132B287B15F90059C347 /* Models.swift */,
 			);
 			path = RainCheck;
 			sourceTree = "<group>";
@@ -189,6 +192,7 @@
 				36641329287A30F10059C347 /* WeatherCollectionViewCell.swift in Sources */,
 				3664130928760F2B0059C347 /* AppDelegate.swift in Sources */,
 				3664130B28760F2B0059C347 /* SceneDelegate.swift in Sources */,
+				3664132C287B15F90059C347 /* Models.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

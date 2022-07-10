@@ -8,113 +8,6 @@
 import UIKit
 import CoreLocation
 
-struct WeatherResponse: Codable {
-    let latitude: Double
-    let longitude: Double
-    let timezone: String
-    let currently: CurrentWeather
-    let hourly: HourlyWeather
-    let daily: DailyWeather
-    let offset: Float
-}
-
-struct CurrentWeather: Codable {
-    let time: Int
-    let summary: String
-    let icon: String
-    let nearestStormDistance: Int?
-    let nearestStormBearing: Int?
-    let precipIntensity: Double
-    let precipProbability: Double
-    let temperature: Double
-    let apparentTemperature: Double
-    let dewPoint: Double
-    let humidity: Double
-    let pressure: Double
-    let windSpeed: Double
-    let windGust: Double
-    let windBearing: Int
-    let cloudCover: Double
-    let uvIndex: Int
-    let visibility: Double
-    let ozone: Double
-}
-
-struct DailyWeather: Codable {
-    let summary: String
-    let icon: String
-    let data: [DailyWeatherEntry]
-}
-
-struct DailyWeatherEntry: Codable {
-    let time: Int
-    let summary: String
-    let icon: String
-    let sunriseTime: Int
-    let sunsetTime: Int
-    let moonPhase: Double
-    let precipIntensity: Double
-    let precipIntensityMax: Double
-    let precipIntensityMaxTime: Int?
-    let precipProbability: Double
-    let precipType: String?
-    let temperatureHigh: Double
-    let temperatureHighTime: Int
-    let temperatureLow: Double
-    let temperatureLowTime: Int
-    let apparentTemperatureHigh: Double
-    let apparentTemperatureHighTime: Int
-    let apparentTemperatureLow: Double
-    let apparentTemperatureLowTime: Int
-    let dewPoint: Double
-    let humidity: Double
-    let pressure: Double
-    let windSpeed: Double
-    let windGust: Double
-    let windGustTime: Int
-    let windBearing: Int
-    let cloudCover: Double
-    let uvIndex: Int
-    let uvIndexTime: Int
-    let visibility: Double
-    let ozone: Double
-    let temperatureMin: Double
-    let temperatureMinTime: Int
-    let temperatureMax: Double
-    let temperatureMaxTime: Int
-    let apparentTemperatureMin: Double
-    let apparentTemperatureMinTime: Int
-    let apparentTemperatureMax: Double
-    let apparentTemperatureMaxTime: Int
-}
-
-struct HourlyWeather: Codable {
-    let summary: String
-    let icon: String
-    let data: [HourlyWeatherEntry]
-}
-
-struct HourlyWeatherEntry: Codable {
-    let time: Int
-    let summary: String
-    let icon: String
-    let precipIntensity: Float
-    let precipProbability: Double
-    let precipType: String?
-    let temperature: Double
-    let apparentTemperature: Double
-    let dewPoint: Double
-    let humidity: Double
-    let pressure: Double
-    let windSpeed: Double
-    let windGust: Double
-    let windBearing: Int
-    let cloudCover: Double
-    let uvIndex: Int
-    let visibility: Double
-    let ozone: Double
-}
-
 class ViewController: UIViewController {
 
   //MARK: - Properties
@@ -122,6 +15,8 @@ class ViewController: UIViewController {
   let locationManager = CLLocationManager()
   var currentLocation: CLLocation?
   var currentWeather: CurrentWeather?
+  var hourlyModels = [HourlyWeatherEntry]()
+  var currentPlacemark: CLPlacemark?
 
   //MARK: - Outlets
   @IBOutlet private weak var table: UITableView!
@@ -143,8 +38,10 @@ class ViewController: UIViewController {
   }
 
   //MARK: - Methods
+  /// API-call method
   func requestWeatherForLocation() {
     guard let currentLocation = currentLocation else { return }
+    nameCurrentLocation(with: currentLocation)
     let longitude = currentLocation.coordinate.longitude
     let latitude = currentLocation.coordinate.latitude
     print("longitude: \(longitude)| latitude: \(latitude)")
@@ -165,6 +62,7 @@ class ViewController: UIViewController {
       self.models.append(contentsOf: entries)
       let current = result.currently
       self.currentWeather = current
+      self.hourlyModels = result.hourly.data
       DispatchQueue.main.async {
         self.table.reloadData()
         self.table.tableHeaderView = self.createTableHeader()
@@ -172,6 +70,7 @@ class ViewController: UIViewController {
     }.resume()
   }
 
+  /// Method for creating table header view
   private func createTableHeader() -> UIView {
     let headerView = UIView(frame: CGRect(x: 0,
                                           y: 0,
@@ -204,6 +103,14 @@ class ViewController: UIViewController {
     temperatureLabel.text = "\(currentWeather.temperature)°"
     summaryLabel.text = currentWeather.summary
 
+    locationLabel.numberOfLines = 2
+    locationLabel.font = UIFont(name: "Helvetica-Bold", size: 30)
+    if let country = currentPlacemark?.country,
+       let locality = currentPlacemark?.locality {
+      DispatchQueue.main.async {
+        locationLabel.text =  "\(country) \n\(locality)"
+      }
+    }
     return headerView
   }
 }
@@ -223,15 +130,37 @@ extension ViewController: CLLocationManagerDelegate {
       requestWeatherForLocation()
     }
   }
+
+  func nameCurrentLocation(with location: CLLocation) {
+    let geoCoder = CLGeocoder()
+    geoCoder.reverseGeocodeLocation(location) { placemarks, error in
+      guard let placemarks = placemarks, error == nil else { return }
+      print("Get current placemark!")
+      self.currentPlacemark = placemarks[0]
+    }
+  }
 }
 
 //MARK: - TableView Delegate & DataSource
 extension ViewController: UITableViewDelegate, UITableViewDataSource {
+  func numberOfSections(in tableView: UITableView) -> Int {
+    return 2
+  }
   func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    if section == 0 {
+      // one ell that is collectionTableViewCell
+      return 1
+    }
     return models.count
   }
 
   func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+    if indexPath.section == 0 {
+      let cell = tableView.dequeueReusableCell(withIdentifier: HourlyTableViewCell.identifier, for: indexPath) as! HourlyTableViewCell
+      cell.configure(with: hourlyModels)
+      cell.backgroundColor = UIColor(red: 162/255.0, green: 217/255.0, blue: 245/255.0, alpha: 1.0)
+      return cell
+    }
     let cell = tableView.dequeueReusableCell(withIdentifier: WeatherTableViewCell.identifier, for: indexPath) as! WeatherTableViewCell
     cell.configure(with: models[indexPath.row])
     cell.backgroundColor = UIColor(red: 162/255.0, green: 217/255.0, blue: 245/255.0, alpha: 1.0)
